@@ -99,7 +99,7 @@ function getDistance(e1, n1, e2, n2) {
 
 function showWelcome() {
 
-  let dist = getDistance(31.150241, 121.431001, ipLoacation.result.location.lng, ipLoacation.result.location.lat); //这里换成自己的经纬度
+  let dist = getDistance(121.431001, 31.150241, ipLoacation.result.location.lng, ipLoacation.result.location.lat); //这里换成自己的经纬度
   let pos = ipLoacation.result.ad_info.nation;
   let ip;
   let posdesc;
@@ -3424,7 +3424,7 @@ function createWinbox() {
 <h3>5. 适配手机</h3>
 <details class="folding-tag" cyan><summary> 查看适配手机的背景 </summary>
               <div class='content'>
-              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(/img/mobileday.jpg)" class="pimgbox" onclick="changeBg('url(/img/mobileday.jpg)')"></a><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(/img/mobilenight.jpg)" class="pimgbox" onclick="changeBg('url(/img/mobilenight.jpg)')"></a></div>
+              <div class="bgbox"><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(/img/mobileday.jpg)" class="pimgbox" onclick="changeBg('url(/img/mobileday.jpg)')"></a><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(/img/mobilenight.jpg)" class="pimgbox" onclick="changeBg('url(/img/mobilenight.jpg)')"></a><a href="javascript:;" rel="noopener external nofollow" style="background-image:url(/img/00e5f933a983493818c838a4d8584cb6_720.jpg)" class="pimgbox" onclick="changeBg('url(/img/00e5f933a983493818c838a4d8584cb6_720.jpg)')"></a></div>
               </div>
             </details>
 
