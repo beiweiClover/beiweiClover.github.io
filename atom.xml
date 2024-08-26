@@ -6,7 +6,7 @@
   <link href="https://www.beiweiclover.top/atom.xml" rel="self"/>
   
   <link href="https://www.beiweiclover.top/"/>
-  <updated>2024-08-14T02:16:55.431Z</updated>
+  <updated>2024-08-19T04:59:25.096Z</updated>
   <id>https://www.beiweiclover.top/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>深度学习（1）PyTorch基础</title>
+    <link href="https://www.beiweiclover.top/posts/f9887b7d.html"/>
+    <id>https://www.beiweiclover.top/posts/f9887b7d.html</id>
+    <published>2024-08-18T10:14:36.000Z</published>
+    <updated>2024-08-19T04:59:25.096Z</updated>
+    
+    <content type="html"><![CDATA[<h1>引言</h1><blockquote><p>个人不希望博客风格趋于严肃,因此会尝试用灵活有趣的语言和例子给大家分享知识~</p></blockquote><p>熟悉深度学习的朋友们可能对PyTorch已经颇有了解了，但不熟悉刚刚起步的朋友们可能还在按照各种教程ANACONDA、CUDA、PyTorch三板斧进行深度学习环境搭建。</p><h3 id="那么，什么是PyTorch？">那么，什么是PyTorch？</h3><p>简单来说，他就是Python的一个库。类似于你要import math库来实现Python中的各种数学公式的计算，PyTorch就是一个方便你进行深度学习计算的一个搭建好的库。它内置了一系列的功能，用来方便实现深度学习的网络搭建。</p><p>简单来说，假如你知道，加入一系列化学反应以后，你就可以得到一个拥有电子流动的化学电池，如图所示</p><div class="img-wrap"><div class="img-bg"><img class="img" src="http://drhuang.com/chinese/science/chemistry/analytical_chemistry/electroanalysis/1_files/快照-1.jpg" style="width:400px;"/></div></div><p>这些电池组件就是你做深度学习网络学到的各种原理，但是在实际应用里，你想要给你家里的遥控器装上电池让遥控器能够正常使用，你不可能真的从头组装一个化学电池然后接到你的遥控器的正负极上。</p><p>虽然可能不是那么贴切，但这么理解也大致没差——PyTorch就是把化学电池帮你打包好了，变成市面上售卖的5号、7号等等各种型号的电池，你需要的话就把电池拿过来用就好了，就不需要你自己再去费尽脑筋搭一个化学电池了。</p><h3 id="PyTorch的核心优势是什么？">PyTorch的核心优势是什么？</h3><ul><li>具有强大的GPU（图形处理单元，也叫显卡）加速的张量计算功能。</li><li>能够进行自动微分计算，从而可以使用基于梯度的方法对模型参数进行优化。</li></ul><p>当然，PyTorch还有很多有点，比如框架简洁、入门简单，容易上手、支持动态神经网络构建，与Python语言无缝结合、调试方便等等等等。</p><p>总之，如果你是一个刚刚入门深度学习或是尤其是高校的研究人员，PyTorch是你的不二之选。</p><hr><h1>1. PyTorch的安装</h1><h3 id="1-1安装方式一（推荐）">1.1安装方式一（推荐）</h3><p>首选建议按照教程ANACONDA、CUDA、PyTorch三板斧进行深度学习环境搭建（这类攻略应该b站一抓一大把，埋个坑，要是之后没东西写了我就做一个攻略水一下）</p><h3 id="1-2安装方式二（快速体验版）">1.2安装方式二（快速体验版）</h3><p>如果你还没有安装PyTorch，但你又想尝试一下使用这个库，很简单，就像你使用任何一个Python库一样。</p><p>在你工作的环境（或文件夹）使用你的windows/Linux/Mac命令行工具</p><p>输入以下命令：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install torch</span><br></pre></td></tr></table></figure><hr><h1>2.PyTorch的基本用法</h1><h3 id="2-1-预备知识">2.1 预备知识</h3><p>在介绍PyTorch用法之前，我们需要先了解一些预备知识，在尝试理解数据时，应注意三种数值。</p><h4 id="2-1-1-连续值（Continuous-Values）">2.1.1. <strong>连续值（Continuous Values）</strong></h4><ul><li><strong>特点</strong>: 连续值是数值数据的一种类型，可以取任意数值，通常用来表示可以测量的量，如重量、距离、时间、温度等。这些值不仅可以进行排序，而且两个值之间的差异是有严格意义的。</li><li><strong>数学运算</strong>: 对连续值可以进行各种数学运算，比如加减乘除，计算平均值等。</li><li><strong>示例</strong>: 包装的重量（如2公斤、3.5公斤），距离（如100英里、250公里），温度（如23.5摄氏度）。</li></ul><h4 id="2-1-2-有序值（Ordinal-Values）">2.1.2. <strong>有序值（Ordinal Values）</strong></h4><ul><li><strong>特点</strong>: 有序值是数值数据的另一种类型，它们有自然的顺序关系，但值之间的差异没有固定的量化意义。换句话说，你知道哪个值比另一个大，但你不知道大多少。</li><li><strong>数学运算</strong>: 你可以对有序值进行排序，但不能进行加减乘除等数学运算。比如，“大号”比“中号”大，但大多少并不确定，不能通过减法来确定差距。</li><li><strong>示例</strong>: 饮料的大小（小、中、大），教育程度（小学、中学、大学），疼痛等级（轻微、中等、剧烈）。</li></ul><h4 id="2-1-3-分类值（Categorical-Values）">2.1.3. <strong>分类值（Categorical Values）</strong></h4><ul><li><strong>特点</strong>: 分类值表示不同的类别或类型，这些类别之间没有内在的顺序，也没有数值之间的量化关系。分类值的目的是区分不同的类别，而不是表示某种顺序或数量关系。</li><li><strong>数学运算</strong>: 对分类值进行排序或数学运算是没有意义的。你只能识别和区分它们。</li><li><strong>示例</strong>: 饮料类型（咖啡、茶、水），城市名称（纽约、巴黎、东京），动物种类（猫、狗、鸟）。</li></ul><h4 id="2-1-4-总结">2.1.4. 总结</h4><ul><li><p><strong>排序</strong>: <strong>连续值</strong>和<strong>有序值</strong>都可以排序，而<strong>分类值</strong>不能排序。</p></li><li><p><strong>数学运算</strong>: <strong>连续值</strong>可以进行各种数学运算；<strong>有序值</strong>只能排序，不适合做加减乘除；<strong>分类值</strong>既不能排序，也不能做数学运算。</p></li><li><p><strong>适用场景</strong>: <strong>连续值</strong>适用于有明确数量关系的场景（如测量和计数）；<strong>有序值</strong>适用于有明显顺序但无固定差异的场景（如等级和排名）；<strong>分类值</strong>适用于仅需区分类别的场景（如类型和种类）。</p></li></ul><h3 id="2-2-张量的基本概念">2.2. 张量的基本概念</h3><p>PyTorch中的数据被表示为张量（Tensor），为了方便大家更好的理解，我们后面统称为Tensor。</p><p>Tensor其实就是多维数组，类似于NumPy中的array数组。使用张量可以方便的存储各种各样的数据，如二维表格数据可以用二维张量处理，如果有多张表格，我们就可以用三维张量存储；</p><p>一副彩色图像（相当于R、G、B三个值矩阵叠加）也可以用三维张量表示；</p><p>同理，一个视频文件（图片+时间），在三维张量基础上加上每张图片对应的时间轴就构成了四维张量，因此用四维张量就可以很好的考虑了。</p><blockquote><p>思考： 每个书面字符都可以由一个代码（数字）表示，代码是一系列适当长度的bits，可以唯一的标识每个字符。那么一句话应该用什么张量来表达呢？一本书又该用什么张量来表达呢？（开发思考，本文不提供答案。）</p></blockquote><h3 id="2-3-案例分析">2.3. 案例分析</h3><blockquote><p>小时候就学过邓小平的话“实践是检验真理的唯一标准。”那时觉得大且宽泛，但是现在，我真切的认为，如果想要掌握一门知识，只是单纯的停留在理论的学习是不行的，所以本博客采用案例分析的方式逐步教学PyTorch的使用，如果有条件的话建议对照本博客复现一下。</p></blockquote><p>葡萄酒质量数据集是可免费获得的表格数据，其中包含vinho verde（葡萄牙北部的葡萄酒）样品的化学特征以及感官质量得分。 您可以从 <a href="https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv">https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv</a> 下载白葡萄酒的数据集。</p><p>该数据集文件包含一个逗号分隔的值集合，这些值组织在12列中，前面是包含列名的标题行。前11列表示化学变量的值;最后一列包含从0(最差)到10(最好)的感官质量评分。</p><p>[('fixed acidity ', ‘固定酸度’), ('volatile acidity ', ‘挥发性酸度’), ('citric acid ', ‘柠檬酸’), ('residual sugar ', ‘残留糖’), ('chlorides ', ‘氯化物’), ('free sulfur dioxide ', ‘游离二氧化硫’), ('total sulfur dioxide ', ‘总二氧化硫’), ('density ', ‘密度’), ('pH ', ‘pH值’), ('sulphates ', ‘硫酸盐’), ('alcohol ', ‘醇’), (‘qualit’, ‘质量’)]</p><p>点击链接后，右键另存为即可将csv文件保存在指定文件夹，这里建议建立一个工作目录，就叫他Wine吧。</p><p>在vscode或者pycharm中打开这个文件夹，将csv文件放入文件夹中，并创建一个PyTorch1的py文件。</p>]]></content>
+    
+    
+    <summary type="html">介绍PyTorch的起源，功能以及在实际中的应用。</summary>
+    
+    
+    
+    <category term="知识" scheme="https://www.beiweiclover.top/categories/%E7%9F%A5%E8%AF%86/"/>
+    
+    
+    <category term="Deeplearning" scheme="https://www.beiweiclover.top/tags/Deeplearning/"/>
+    
+    <category term="PyTorch" scheme="https://www.beiweiclover.top/tags/PyTorch/"/>
+    
+  </entry>
   
   <entry>
     <title>焦虑、死亡和迷惘</title>

@@ -4,7 +4,16 @@
   <url>
     <loc>https://www.beiweiclover.top/zatan/index.html</loc>
     
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.beiweiclover.top/posts/f9887b7d.html</loc>
+    
+    <lastmod>2024-08-19</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -67,7 +76,7 @@
 
   <url>
     <loc>https://www.beiweiclover.top/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -75,28 +84,42 @@
   
   <url>
     <loc>https://www.beiweiclover.top/tags/%E5%93%B2%E5%AD%A6/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.beiweiclover.top/tags/%E9%9A%8F%E7%AC%94/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.beiweiclover.top/tags/Deeplearning/</loc>
+    <lastmod>2024-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.beiweiclover.top/tags/PyTorch/</loc>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.beiweiclover.top/tags/Markdown/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.beiweiclover.top/tags/%E5%A4%96%E6%8C%82%E6%A0%87%E7%AD%BE/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -105,14 +128,21 @@
   
   <url>
     <loc>https://www.beiweiclover.top/categories/%E6%96%87%E9%9B%86/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.beiweiclover.top/categories/%E7%9F%A5%E8%AF%86/</loc>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.beiweiclover.top/categories/%E6%BC%94%E7%A4%BA/</loc>
-    <lastmod>2024-08-18</lastmod>
+    <lastmod>2024-08-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
