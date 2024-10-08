@@ -1275,12 +1275,42 @@ function switchNightMode() {
 
 //----------------------------------------------------------------
 
+/* 分享按钮 start */
+//----------------------------------------------------------------
 
-
-// 防抖
-function share() {
-  debounce(share_, 300);
+function share_() {
+  let e = window.location.origin + window.location.pathname;
+  try {
+      var t = document.title,
+          n = t.endsWith("| beiweiClover") ? t.substring(0, t.length - 14) : t;
+      navigator.clipboard.writeText("beiweiClover的站内分享\n标题：" + n + "\n链接：" + e + "\n欢迎来访！(｡･∀･)ﾉﾞ"),
+      new Vue({
+          data: function() {
+              this.$notify({
+                  title: "成功复制分享信息(●ˇ∀ˇ●)",
+                  message: "您现在可以通过粘贴直接跟小伙伴分享了！",
+                  position: "top-left",
+                  offset: 50,
+                  showClose: !0,
+                  type: "success",
+                  duration: 5000
+              })
+          }
+      })
+  } catch (e) {
+      console.error("复制失败！(っ °Д °;)っ", e)
+  }
 }
+
+function share() {
+  debounce(share_, 300)
+}
+
+
+// // 防抖
+// function share() {
+//   debounce(share_, 300);
+// }
 
 /* 分享按钮 end */
 
