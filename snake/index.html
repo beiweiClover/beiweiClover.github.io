@@ -14,7 +14,7 @@
         h1 {
             color: #00695c;
             margin-top: 20px;
-            font-size: 24px; /* 字体大小调整为24像素 */
+            font-size: 24px;
         }
         #gameCanvas {
             background-color: #ffffff;
@@ -22,63 +22,74 @@
             display: block;
             margin: 20px auto;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 1280px; /* 调整画布宽度为1280像素 */
-            height: 720px; /* 调整画布高度为720像素 */
+            width: 1280px;
+            height: 720px;
         }
         p {
             color: #004d40;
-            font-size: 20px; /* 字体大小调整为20像素 */
+            font-size: 20px;
             margin-top: 20px;
         }
         p a {
             display: inline-block;
-            padding: 10px 20px; /* 添加内边距 */
-            border: 2px solid #004d40; /* 添加边框 */
-            border-radius: 20px; /* 添加边框圆角 */
-            font-size: 16px; /* 字体大小调整为16像素 */
+            padding: 10px 20px;
+            border: 2px solid #004d40;
+            border-radius: 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: #004d40;
+        }
+        #difficulty {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>贪吃蛇游戏</h1>
     <canvas id="gameCanvas"></canvas>
+    <div id="scoreDisplay">得分: 0</div>
+    <div id="difficulty">
+        <label for="difficultySelect">选择难度:</label>
+        <select id="difficultySelect">
+            <option value="100">简单</option>
+            <option value="80" selected>中等</option>
+            <option value="60">困难</option>
+            <option value="55" id="easterEgg">彩蛋模式</option>
+        </select>
+    </div>
+    <p id="rewardButton" style="display: none;"></p>
     <p>按空格键开始/重启游戏，使用 "WASD" 键控制方向。</p>
     <p style="font-size: 12px; color: #004d40; margin-top: 20px;">
-        <a href="Doc_Yu.html" style="text-decoration: none; color: #004d40;">别点我</a>
     </p>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const snakeSize = 5; // 修复贪吃蛇的点太大了
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
 
-        const canvasWidth = 1280; /* 调整画布宽度为1280像素 */
-        const canvasHeight = 720; /* 调整画布高度为720像素 */
+        let snake, food, direction, gameLoop, isGameRunning = false;
+        let score = 0;
+        let gameSpeed = 75; // 默认中等难度
 
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-
-        // 游戏变量
-        let snake;
-        let food;
-        let direction;
-        let gameLoop;
-        let isGameRunning = false;
-
-        // 常量
-        const snakeSize = 20;
+        document.getElementById('difficultySelect').addEventListener('change', function() {
+            gameSpeed = parseInt(this.value);
+            if (isGameRunning) {
+                clearInterval(gameLoop);
+                gameLoop = setInterval(updateGame, gameSpeed);
+            }
+        });
 
         // 初始化游戏
         function initGame() {
-            snake = [
-                {
-                    x: Math.floor(canvasWidth / 2 / snakeSize) * snakeSize,
-                    y: Math.floor(canvasHeight / 2 / snakeSize) * snakeSize
-                }
-            ];
+            score = 0;
+            document.getElementById('scoreDisplay').innerText = `得分: ${score}`;
+            snake = [{ x: Math.floor(canvasWidth / 2 / snakeSize) * snakeSize, y: Math.floor(canvasHeight / 2 / snakeSize) * snakeSize }];
             generateFood();
             direction = getRandomDirection();
             isGameRunning = true;
-            if (gameLoop) clearInterval(gameLoop);
-            gameLoop = setInterval(updateGame, 50);
+            clearInterval(gameLoop);
+            gameLoop = setInterval(updateGame, gameSpeed);
         }
 
         // 生成随机食物位置
@@ -97,41 +108,36 @@
 
         // 更新游戏状态
         function updateGame() {
-            let head = { x: snake[0].x, y: snake[0].y };
+            const head = { ...snake[0] };
 
-            // 移动蛇
             switch (direction) {
-                case 'left':
-                    head.x -= snakeSize;
-                    break;
-                case 'up':
-                    head.y -= snakeSize;
-                    break;
-                case 'right':
-                    head.x += snakeSize;
-                    break;
-                case 'down':
-                    head.y += snakeSize;
-                    break;
+                case 'left': head.x -= snakeSize; break;
+                case 'up': head.y -= snakeSize; break;
+                case 'right': head.x += snakeSize; break;
+                case 'down': head.y += snakeSize; break;
             }
 
-            // 检查碰撞
-            if (
-                head.x < 0 ||
-                head.x >= canvasWidth ||
-                head.y < 0 ||
-                head.y >= canvasHeight ||
-                checkCollision(head, snake)
-            ) {
+            // 检查是否撞墙或撞到自己
+            if (head.x < 0 || head.x >= canvasWidth || head.y < 0 || head.y >= canvasHeight || checkCollision(head)) {
                 gameOver();
                 return;
             }
 
             snake.unshift(head);
-
             // 检查是否吃到食物
             if (head.x === food.x && head.y === food.y) {
+                score++;
+                document.getElementById('scoreDisplay').innerText = `得分: ${score}`;
                 generateFood();
+
+                // 彩蛋模式得分达到30分时跳转
+                if (score >= 30 && document.getElementById('difficultySelect').value === "55") {
+                    if (confirm("恭喜你触发彩蛋！")) {
+                        document.getElementById('rewardButton').style.display = 'block';
+                        document.getElementById('rewardButton').innerText = '点击领取奖励';
+                        window.location.href = 'Doc_Yu.html'; // 添加跳转地址
+                    }
+                }
             } else {
                 snake.pop();
             }
@@ -141,59 +147,40 @@
 
         // 绘制游戏元素
         function drawGame() {
-            // 清除画布
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-            // 绘制食物
             ctx.fillStyle = '#d32f2f';
             ctx.fillRect(food.x, food.y, snakeSize, snakeSize);
-
-            // 绘制蛇
             ctx.fillStyle = '#388e3c';
-            snake.forEach(part => {
-                ctx.fillRect(part.x, part.y, snakeSize, snakeSize);
-            });
+            snake.forEach(part => ctx.fillRect(part.x, part.y, snakeSize, snakeSize));
         }
 
         // 检查蛇是否碰到自己
-        function checkCollision(head, body) {
-            for (let i = 1; i < body.length; i++) {
-                if (head.x === body[i].x && head.y === body[i].y) {
-                    return true;
-                }
-            }
-            return false;
+        function checkCollision(head) {
+            return snake.slice(1).some(part => part.x === head.x && part.y === head.y);
         }
 
         // 处理游戏结束
         function gameOver() {
             isGameRunning = false;
             clearInterval(gameLoop);
-            alert('游戏结束！按空格键重新开始。');
+            alert(`游戏结束！你的得分是: ${score}。按空格键重新开始。`);
         }
 
         // 键盘控制
         document.addEventListener('keydown', function (e) {
             if (!isGameRunning && e.code === 'Space') {
                 initGame();
-            } else {
+            } else if (isGameRunning) {
                 switch (e.key.toLowerCase()) {
-                    case 'w':
-                        if (direction !== 'down') direction = 'up';
-                        break;
-                    case 'a':
-                        if (direction !== 'right') direction = 'left';
-                        break;
-                    case 's':
-                        if (direction !== 'up') direction = 'down';
-                        break;
-                    case 'd':
-                        if (direction !== 'left') direction = 'right';
-                        break;
+                    case 'w': if (direction !== 'down') direction = 'up'; break;
+                    case 'a': if (direction !== 'right') direction = 'left'; break;
+                    case 's': if (direction !== 'up') direction = 'down'; break;
+                    case 'd': if (direction !== 'left') direction = 'right'; break;
                 }
             }
         });
     </script>
 </body>
 </html>
+
