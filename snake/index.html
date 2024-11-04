@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>贪吃蛇游戏</title>
+    <style>
+        body {
+            background-color: #e0f7fa;
+            text-align: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #00695c;
+            margin-top: 20px;
+            font-size: 24px; /* 字体大小调整为24像素 */
+        }
+        #gameCanvas {
+            background-color: #ffffff;
+            border: 2px solid #004d40;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 1280px; /* 调整画布宽度为1280像素 */
+            height: 720px; /* 调整画布高度为720像素 */
+        }
+        p {
+            color: #004d40;
+            font-size: 20px; /* 字体大小调整为20像素 */
+            margin-top: 20px;
+        }
+        p a {
+            display: inline-block;
+            padding: 10px 20px; /* 添加内边距 */
+            border: 2px solid #004d40; /* 添加边框 */
+            border-radius: 20px; /* 添加边框圆角 */
+            font-size: 16px; /* 字体大小调整为16像素 */
+        }
+    </style>
+</head>
+<body>
+    <h1>贪吃蛇游戏</h1>
+    <canvas id="gameCanvas"></canvas>
+    <p>按空格键开始/重启游戏，使用 "WASD" 键控制方向。</p>
+    <p style="font-size: 12px; color: #004d40; margin-top: 20px;">
+        <a href="Doc_Yu.html" style="text-decoration: none; color: #004d40;">别点我</a>
+    </p>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const canvasWidth = 1280; /* 调整画布宽度为1280像素 */
+        const canvasHeight = 720; /* 调整画布高度为720像素 */
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        // 游戏变量
+        let snake;
+        let food;
+        let direction;
+        let gameLoop;
+        let isGameRunning = false;
+
+        // 常量
+        const snakeSize = 20;
+
+        // 初始化游戏
+        function initGame() {
+            snake = [
+                {
+                    x: Math.floor(canvasWidth / 2 / snakeSize) * snakeSize,
+                    y: Math.floor(canvasHeight / 2 / snakeSize) * snakeSize
+                }
+            ];
+            generateFood();
+            direction = getRandomDirection();
+            isGameRunning = true;
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(updateGame, 50);
+        }
+
+        // 生成随机食物位置
+        function generateFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvasWidth / snakeSize)) * snakeSize,
+                y: Math.floor(Math.random() * (canvasHeight / snakeSize)) * snakeSize
+            };
+        }
+
+        // 获取随机初始方向
+        function getRandomDirection() {
+            const directions = ['left', 'up', 'right', 'down'];
+            return directions[Math.floor(Math.random() * directions.length)];
+        }
+
+        // 更新游戏状态
+        function updateGame() {
+            let head = { x: snake[0].x, y: snake[0].y };
+
+            // 移动蛇
+            switch (direction) {
+                case 'left':
+                    head.x -= snakeSize;
+                    break;
+                case 'up':
+                    head.y -= snakeSize;
+                    break;
+                case 'right':
+                    head.x += snakeSize;
+                    break;
+                case 'down':
+                    head.y += snakeSize;
+                    break;
+            }
+
+            // 检查碰撞
+            if (
+                head.x < 0 ||
+                head.x >= canvasWidth ||
+                head.y < 0 ||
+                head.y >= canvasHeight ||
+                checkCollision(head, snake)
+            ) {
+                gameOver();
+                return;
+            }
+
+            snake.unshift(head);
+
+            // 检查是否吃到食物
+            if (head.x === food.x && head.y === food.y) {
+                generateFood();
+            } else {
+                snake.pop();
+            }
+
+            drawGame();
+        }
+
+        // 绘制游戏元素
+        function drawGame() {
+            // 清除画布
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // 绘制食物
+            ctx.fillStyle = '#d32f2f';
+            ctx.fillRect(food.x, food.y, snakeSize, snakeSize);
+
+            // 绘制蛇
+            ctx.fillStyle = '#388e3c';
+            snake.forEach(part => {
+                ctx.fillRect(part.x, part.y, snakeSize, snakeSize);
+            });
+        }
+
+        // 检查蛇是否碰到自己
+        function checkCollision(head, body) {
+            for (let i = 1; i < body.length; i++) {
+                if (head.x === body[i].x && head.y === body[i].y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 处理游戏结束
+        function gameOver() {
+            isGameRunning = false;
+            clearInterval(gameLoop);
+            alert('游戏结束！按空格键重新开始。');
+        }
+
+        // 键盘控制
+        document.addEventListener('keydown', function (e) {
+            if (!isGameRunning && e.code === 'Space') {
+                initGame();
+            } else {
+                switch (e.key.toLowerCase()) {
+                    case 'w':
+                        if (direction !== 'down') direction = 'up';
+                        break;
+                    case 'a':
+                        if (direction !== 'right') direction = 'left';
+                        break;
+                    case 's':
+                        if (direction !== 'up') direction = 'down';
+                        break;
+                    case 'd':
+                        if (direction !== 'left') direction = 'right';
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

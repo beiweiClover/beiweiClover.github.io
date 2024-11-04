@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>jQuery 示例</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-size: cover;
+    }
+    h1 {
+      margin-bottom: auto;
+    }
+    #myButton {
+      font-size: 24px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #myText {
+      font-size: 24px;
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>于洪波的网页</h1>
+<button id="myButton">点击我</button>
+<p id="myText">今天是2024年7月12日</p>
+
+<script>
+  $(document).ready(function(){
+    let clickCount = 0;
+    $("#myButton").click(function(){
+      clickCount++;
+      if (clickCount < 20) {
+        $("body").css("background-image", "url('https://s1.locimg.com/2024/10/14/79bd484d83d1a.JPG')");
+        $("#myText").text("是我暗恋于洪波的第114514天！");
+        $("#myText").css("font-size", "36px");
+        $("#myText").css("top", "50%");
+        $("<p>亲亲我的于洪波</p>").appendTo("body");
+      } else {
+        $("body").empty();
+        $("body").css("background", "white");
+        $("<h1>于洪波是我的，不给你亲了，请退出网页</h1>").appendTo("body").css({
+          "text-align": "center",
+          "font-size": "36px"
+        });
+        setTimeout(function(){
+          window.location.href = "http://www.beiweiClover.top";
+        }, 3000);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
