@@ -2460,6 +2460,12 @@ if (m == 10 && dd <= 3) {//国庆节
     sessionStorage.setItem("isPopupWindow", "1");
   }
 }
+if (y == 2024 && m == 11 && dd <= 15 && dd >= 11) {//庆祝
+  if (sessionStorage.getItem("isPopupWindow") != "1") {
+    Swal.fire("🎇🎇祝贺站长及团队🎇🎇\n获得2024年华为杯研究生数学建模大赛😊C题一等奖！！！\n👄YHB👄\n🐻XL🐻\n🍀LXM🍀");
+    sessionStorage.setItem("isPopupWindow", "1");
+  }
+}
 if (m == 8 && dd == 15) {//搞来玩的，小日子投降
   if (sessionStorage.getItem("isPopupWindow") != "1") {
     Swal.fire("小日子已经投降" + (y - 1945).toString() + "年了😃");
