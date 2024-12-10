@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>英雄联盟英雄选择器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .heroes-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .hero {
+            width: 100px;
+            text-align: center;
+        }
+        .hero img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            transition: border-color 0.3s;
+        }
+        .hero img:hover {
+            border-color: #666;
+        }
+        .team {
+            margin-top: 20px;
+        }
+        .team h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007acc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+        select, input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        @media (max-width: 800px) {
+            .hero {
+                width: 80px;
+            }
+            .hero img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+        @media (max-width: 500px) {
+            .hero {
+                width: 60px;
+            }
+            .hero img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        /* Loader Styles */
+        #loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #007acc;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Disabled Select Styles */
+        select:disabled {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>英雄联盟英雄选择器</h1>
+        <div id="loader"></div>
+        <div id="mainContent" style="display: none;">
+            <div class="section">
+                <label for="gameMode">选择游戏模式:</label>
+                <select id="gameMode">
+                    <option value="1v1">1v1</option>
+                    <option value="2v2">2v2</option>
+                    <option value="3v3">3v3</option>
+                    <option value="4v4">4v4</option>
+                    <option value="5v5">5v5</option>
+                </select>
+            </div>
+            <div class="section">
+                <input type="checkbox" id="enableBan">
+                <label for="enableBan">开启禁用英雄</label>
+            </div>
+            <div class="section" id="banSection" style="display: none;">
+                <h3>选择禁用英雄:</h3>
+                <div id="banHeroes"></div>
+            </div>
+            <div class="section">
+                <button id="generateBtn">生成随机英雄</button>
+            </div>
+            <div class="team" id="redTeam">
+                <h3>红方英雄:</h3>
+                <div class="heroes-row" id="redHeroes"></div>
+            </div>
+            <div class="team" id="blueTeam">
+                <h3>蓝方英雄:</h3>
+                <div class="heroes-row" id="blueHeroes"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let heroes = []; // 全部英雄数据
+
+        const gameModeSelect = document.getElementById('gameMode');
+        const enableBanCheckbox = document.getElementById('enableBan');
+        const banSection = document.getElementById('banSection');
+        const banHeroesDiv = document.getElementById('banHeroes');
+        const generateBtn = document.getElementById('generateBtn');
+        const redHeroesDiv = document.getElementById('redHeroes');
+        const blueHeroesDiv = document.getElementById('blueHeroes');
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('mainContent');
+
+        // 获取最新的 Data Dragon 版本
+        async function getLatestVersion() {
+            try {
+                const response = await fetch('https://ddragon.leagueoflegends.com/api/versions.json');
+                const versions = await response.json();
+                return versions[0];
+            } catch (error) {
+                console.error('Error fetching latest version:', error);
+                alert('无法获取最新的英雄数据，请稍后再试。');
+                return null;
+            }
+        }
+
+        // 获取所有英雄数据
+        async function getAllChampions(latestVersion) {
+            try {
+                const response = await fetch(`https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/zh_CN/champion.json`);
+                const data = await response.json();
+                const champions = data.data;
+                const heroesArray = Object.values(champions).map(champion => ({
+                    name: champion.name,
+                    img: `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/img/champion/${champion.id}.png`
+                }));
+                return heroesArray;
+            } catch (error) {
+                console.error('Error fetching champions data:', error);
+                alert('无法获取英雄数据，请稍后再试。');
+                return [];
+            }
+        }
+
+        // 初始化英雄数据
+        async function initializeHeroes() {
+            loader.style.display = 'block';
+            const latestVersion = await getLatestVersion();
+            if (!latestVersion) {
+                loader.style.display = 'none';
+                return;
+            }
+            heroes = await getAllChampions(latestVersion);
+            loader.style.display = 'none';
+            mainContent.style.display = 'block';
+        }
+
+        // 更新禁用英雄选项
+        function updateBanOptions() {
+            const gameMode = gameModeSelect.value;
+            let banCountPerTeam = 0;
+            let teamSize = 0;
+            switch(gameMode) {
+                case '1v1':
+                    teamSize = 1;
+                    banCountPerTeam = 3; // 每队禁用3个英雄
+                    break;
+                case '2v2':
+                    teamSize = 2;
+                    banCountPerTeam = 3;
+                    break;
+                case '3v3':
+                    teamSize = 3;
+                    banCountPerTeam = 3;
+                    break;
+                case '4v4':
+                    teamSize = 4;
+                    banCountPerTeam = 3;
+                    break;
+                case '5v5':
+                    teamSize = 5;
+                    banCountPerTeam = 3;
+                    break;
+                default:
+                    teamSize = 1;
+                    banCountPerTeam = 3;
+            }
+
+            const totalBans = banCountPerTeam * 2; // 红蓝两队
+            banHeroesDiv.innerHTML = '';
+            for(let i = 0; i < totalBans; i++) {
+                const select = document.createElement('select');
+                select.innerHTML = `<option value="">选择英雄</option>` + heroes.map(hero => `<option value="${hero.name}">${hero.name}</option>`).join('');
+                banHeroesDiv.appendChild(select);
+            }
+        }
+
+        // 切换禁用英雄部分的显示
+        enableBanCheckbox.addEventListener('change', () => {
+            if(enableBanCheckbox.checked) {
+                banSection.style.display = 'block';
+                updateBanOptions();
+            } else {
+                banSection.style.display = 'none';
+            }
+        });
+
+        // 切换游戏模式时更新禁用英雄选项
+        gameModeSelect.addEventListener('change', () => {
+            if(enableBanCheckbox.checked) {
+                updateBanOptions();
+            }
+        });
+
+        // 生成随机英雄
+        generateBtn.addEventListener('click', () => {
+            // 获取禁用的英雄
+            let bannedHeroes = [];
+            if(enableBanCheckbox.checked) {
+                const selects = banHeroesDiv.querySelectorAll('select');
+                selects.forEach(select => {
+                    if(select.value && !bannedHeroes.includes(select.value)) {
+                        bannedHeroes.push(select.value);
+                    }
+                });
+            }
+
+            // 可用英雄列表
+            let availableHeroes = heroes.filter(hero => !bannedHeroes.includes(hero.name));
+
+            // 获取游戏模式
+            const gameMode = gameModeSelect.value;
+            const baseTeamSize = parseInt(gameMode.split('v')[0]);
+            const teamSize = baseTeamSize * 3; // 三倍人数
+
+            // 检查是否有足够的英雄
+            if(availableHeroes.length < teamSize * 2) {
+                alert('可用英雄不足，请减少禁用英雄数量或增加英雄池。');
+                return;
+            }
+
+            // 随机打乱英雄列表
+            availableHeroes = shuffleArray(availableHeroes);
+
+            // 分配英雄
+            const redTeamHeroes = availableHeroes.slice(0, teamSize);
+            const blueTeamHeroes = availableHeroes.slice(teamSize, teamSize * 2);
+
+            // 显示英雄
+            displayHeroes(redHeroesDiv, redTeamHeroes);
+            displayHeroes(blueHeroesDiv, blueTeamHeroes);
+        });
+
+        // 显示英雄列表
+        function displayHeroes(container, teamHeroes) {
+            container.innerHTML = '';
+            teamHeroes.forEach(hero => {
+                const heroDiv = document.createElement('div');
+                heroDiv.classList.add('hero');
+                heroDiv.innerHTML = `<img src="${hero.img}" alt="${hero.name}" title="${hero.name}"><br>${hero.name}`;
+                container.appendChild(heroDiv);
+            });
+        }
+
+        // 洗牌算法（Fisher-Yates Shuffle）
+        function shuffleArray(array) {
+            let currentIndex = array.length, temporaryValue, randomIndex;
+
+            // 当还有元素需要洗牌时
+            while (0 !== currentIndex) {
+
+                // 选择一个剩余的元素
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // 交换当前元素和随机选择的元素
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }
+
+        // 初始化禁用英雄选项
+        window.onload = () => {
+            initializeHeroes();
+        };
+    </script>
+</body>
+</html>
+
